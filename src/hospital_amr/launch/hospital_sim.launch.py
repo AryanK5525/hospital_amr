@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-hospital_sim.launch.py — All-in-one hospital AMR launch.
+hospital_sim.launch.py -- All-in-one hospital AMR launch.
 
-Launches Gazebo (hospital ward), TurtleBot3 Waffle, Nav2, and RViz.
+Launches Gazebo (hospital ward), TurtleBot3 Burger, Nav2, and RViz.
 """
 
 import os
@@ -75,15 +75,15 @@ def generate_launch_description():
             'robot_description': robot_description,
         }])
 
-    # Spawn robot at pharmacy (-5.25, -2.5)
+    # Spawn robot at pharmacy (1.75, 2.5) — original working position
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=[
             '-name', 'burger',
             '-file', robot_sdf,
-            '-x', '-5.25',
-            '-y', '-2.5',
+            '-x', '1.75',
+            '-y', '2.5',
             '-z', '0.05',
         ],
         output='screen')
@@ -98,7 +98,7 @@ def generate_launch_description():
         }],
         output='screen')
 
-    # Nav2 bringup (composition mode — proven working)
+    # Nav2 bringup (composition mode -- proven working)
     nav2_bringup = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')),
@@ -111,6 +111,7 @@ def generate_launch_description():
             'use_respawn': 'false',
             'use_keepout_zones': 'false',
             'use_speed_zones': 'false',
+            'namespace': '',
         }.items())
 
     # RViz
@@ -120,6 +121,7 @@ def generate_launch_description():
         condition=IfCondition(use_rviz),
         launch_arguments={
             'use_sim_time': 'true',
+            'namespace': '',
         }.items())
 
     ld = LaunchDescription()

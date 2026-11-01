@@ -28,13 +28,13 @@
       <direction>-0.3 0.1 -0.9</direction>
     </light>
     <light type="point" name="corridor_light_1">
-      <pose>-4 0 2.4 0 0 0</pose>
+      <pose>3 5 2.4 0 0 0</pose>
       <diffuse>0.8 0.8 0.75 1</diffuse>
       <intensity>0.5</intensity>
       <attenuation><range>10</range><constant>0.5</constant><linear>0.1</linear><quadratic>0.01</quadratic></attenuation>
     </light>
     <light type="point" name="corridor_light_2">
-      <pose>3 0 2.4 0 0 0</pose>
+      <pose>10 5 2.4 0 0 0</pose>
       <diffuse>0.8 0.8 0.75 1</diffuse>
       <intensity>0.5</intensity>
       <attenuation><range>10</range><constant>0.5</constant><linear>0.1</linear><quadratic>0.01</quadratic></attenuation>
@@ -51,10 +51,9 @@
     </scene>
 
     <!-- ========== FLOOR ========== -->
-    <!-- Hospital: x=[-7,7], y=[-5,5], centered at origin -->
-    <model name="hospital_floor">
-      <static>true</static>
-      <pose>0.0 0.0 -0.005 0 0 0</pose>
+    <!-- Hospital: x=[0,14], y=[0,10] -->
+    <model name="hospital_floor"><static>true</static>
+      <pose>7.0 5.0 -0.005 0 0 0</pose>
       <link name="link">
         <collision name="col"><geometry><box><size>16.0 12.0 0.01</size></box></geometry>
           <surface><friction><ode><mu>100</mu><mu2>50</mu2></ode></friction></surface>
@@ -67,7 +66,7 @@
 
     <!-- ========== OUTER WALLS ========== -->
     <model name="wall_south"><static>true</static>
-      <pose>0.0 -5.0 1.25 0 0 0</pose>
+      <pose>7.0 0.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>14.0 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>14.0 0.15 2.5</size></box></geometry>
@@ -75,7 +74,7 @@
       </link>
     </model>
     <model name="wall_north"><static>true</static>
-      <pose>0.0 5.0 1.25 0 0 0</pose>
+      <pose>7.0 10.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>14.0 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>14.0 0.15 2.5</size></box></geometry>
@@ -83,7 +82,7 @@
       </link>
     </model>
     <model name="wall_west"><static>true</static>
-      <pose>-7.0 0.0 1.25 0 0 0</pose>
+      <pose>0.0 5.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 10.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 10.0 2.5</size></box></geometry>
@@ -91,7 +90,7 @@
       </link>
     </model>
     <model name="wall_east"><static>true</static>
-      <pose>7.0 0.0 1.25 0 0 0</pose>
+      <pose>14.0 5.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 10.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 10.0 2.5</size></box></geometry>
@@ -99,45 +98,46 @@
       </link>
     </model>
 
-    <!-- ========== CORRIDOR WALLS y=-1 (south corridor) ========== -->
-    <!-- Pharmacy door gap: x=-5.6 to x=-4.4 -->
-    <model name="corr_s1"><static>true</static><pose>-6.3 -1.0 1.25 0 0 0</pose>
+    <!-- ========== CORRIDOR WALLS y=4 (south corridor wall) ========== -->
+    <!-- Pharmacy door gap: x=1.4 to x=2.6 -->
+    <model name="corr_s1"><static>true</static><pose>0.7 4.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>1.4 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>1.4 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="corr_s2"><static>true</static><pose>-3.95 -1.0 1.25 0 0 0</pose>
+    <!-- gap 1.4 to 2.6 (pharmacy door) -->
+    <model name="corr_s2"><static>true</static><pose>3.55 4.0 1.25 0 0 0</pose>
       <link name="link">
-        <collision name="c"><geometry><box><size>0.9 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.9 0.15 2.5</size></box></geometry>
+        <collision name="c"><geometry><box><size>1.7 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.7 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="corr_s3"><static>true</static><pose>-2.625 -1.0 1.25 0 0 0</pose>
-      <link name="link">
-        <collision name="c"><geometry><box><size>1.75 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>1.75 0.15 2.5</size></box></geometry>
-          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
-      </link>
-    </model>
-    <!-- Room 4 door gap: x=-1.75 to x=-0.6 -->
-    <model name="corr_s4"><static>true</static><pose>0.575 -1.0 1.25 0 0 0</pose>
-      <link name="link">
-        <collision name="c"><geometry><box><size>2.35 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>2.35 0.15 2.5</size></box></geometry>
-          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="corr_s5"><static>true</static><pose>2.625 -1.0 1.25 0 0 0</pose>
+    <model name="corr_s3"><static>true</static><pose>5.275 4.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>1.75 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>1.75 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="corr_s6"><static>true</static><pose>5.25 -1.0 1.25 0 0 0</pose>
+    <!-- gap 5.25 to 6.4 (room 4 door) -->
+    <model name="corr_s4"><static>true</static><pose>7.325 4.0 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1.65 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.65 0.15 2.5</size></box></geometry>
+          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="corr_s5"><static>true</static><pose>9.75 4.0 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1.5 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="corr_s6"><static>true</static><pose>12.25 4.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>3.5 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>3.5 0.15 2.5</size></box></geometry>
@@ -145,46 +145,47 @@
       </link>
     </model>
 
-    <!-- ========== CORRIDOR WALLS y=1 (north corridor) ========== -->
-    <!-- Room 1 door gap: x=-5.6 to x=-4.4 -->
-    <model name="corr_n1"><static>true</static><pose>-6.3 1.0 1.25 0 0 0</pose>
+    <!-- ========== CORRIDOR WALLS y=6 (north corridor wall) ========== -->
+    <!-- Room 1 door gap: x=1.4 to x=2.6 -->
+    <model name="corr_n1"><static>true</static><pose>0.7 6.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>1.4 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>1.4 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="corr_n2"><static>true</static><pose>-3.95 1.0 1.25 0 0 0</pose>
+    <!-- gap 1.4 to 2.6 (room 1 door) -->
+    <model name="corr_n2"><static>true</static><pose>3.55 6.0 1.25 0 0 0</pose>
       <link name="link">
-        <collision name="c"><geometry><box><size>0.9 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>0.9 0.15 2.5</size></box></geometry>
+        <collision name="c"><geometry><box><size>1.7 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.7 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="corr_n3"><static>true</static><pose>-2.625 1.0 1.25 0 0 0</pose>
-      <link name="link">
-        <collision name="c"><geometry><box><size>1.75 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>1.75 0.15 2.5</size></box></geometry>
-          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
-      </link>
-    </model>
-    <!-- Room 2 door gap: x=-1.75 to x=-0.6 -->
-    <model name="corr_n4"><static>true</static><pose>0.575 1.0 1.25 0 0 0</pose>
-      <link name="link">
-        <collision name="c"><geometry><box><size>2.35 0.15 2.5</size></box></geometry></collision>
-        <visual name="v"><geometry><box><size>2.35 0.15 2.5</size></box></geometry>
-          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
-      </link>
-    </model>
-    <model name="corr_n5"><static>true</static><pose>2.625 1.0 1.25 0 0 0</pose>
+    <model name="corr_n3"><static>true</static><pose>5.275 6.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>1.75 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>1.75 0.15 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <!-- Room 3 door gap: x=3.5 to x=4.7 -->
-    <model name="corr_n6"><static>true</static><pose>5.85 1.0 1.25 0 0 0</pose>
+    <!-- gap 5.25 to 6.4 (room 2 door) -->
+    <model name="corr_n4"><static>true</static><pose>7.325 6.0 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1.65 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.65 0.15 2.5</size></box></geometry>
+          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
+      </link>
+    </model>
+    <model name="corr_n5"><static>true</static><pose>9.75 6.0 1.25 0 0 0</pose>
+      <link name="link">
+        <collision name="c"><geometry><box><size>1.5 0.15 2.5</size></box></geometry></collision>
+        <visual name="v"><geometry><box><size>1.5 0.15 2.5</size></box></geometry>
+          <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
+      </link>
+    </model>
+    <!-- gap 10.5 to 11.7 (room 3 door) -->
+    <model name="corr_n6"><static>true</static><pose>12.85 6.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>2.3 0.15 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.3 0.15 2.5</size></box></geometry>
@@ -192,59 +193,60 @@
       </link>
     </model>
 
-    <!-- ========== ROOM DIVIDER WALLS (vertical) ========== -->
-    <!-- Upper rooms (y=1 to y=5) -->
-    <model name="div_u12"><static>true</static><pose>-3.5 3.0 1.25 0 0 0</pose>
+    <!-- ========== ROOM DIVIDERS ========== -->
+    <!-- Upper rooms dividers -->
+    <model name="div_u1"><static>true</static><pose>3.5 8.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_u1r"><static>true</static><pose>-1.75 3.0 1.25 0 0 0</pose>
+    <model name="div_u2"><static>true</static><pose>5.25 8.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_u23"><static>true</static><pose>1.75 3.0 1.25 0 0 0</pose>
+    <model name="div_u3"><static>true</static><pose>8.75 8.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_u3l"><static>true</static><pose>3.5 3.0 1.25 0 0 0</pose>
+    <model name="div_u4"><static>true</static><pose>10.5 8.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <!-- Lower rooms (y=-5 to y=-1) -->
-    <model name="div_l_pharm"><static>true</static><pose>-3.5 -3.0 1.25 0 0 0</pose>
+
+    <!-- Lower rooms dividers -->
+    <model name="div_l1"><static>true</static><pose>3.5 2.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_l_r4l"><static>true</static><pose>-1.75 -3.0 1.25 0 0 0</pose>
+    <model name="div_l2"><static>true</static><pose>5.25 2.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_l_r4r"><static>true</static><pose>1.75 -3.0 1.25 0 0 0</pose>
+    <model name="div_l3"><static>true</static><pose>8.75 2.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
           <material><ambient>0.85 0.85 0.80 1</ambient><diffuse>0.85 0.85 0.80 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="div_l_nurse"><static>true</static><pose>3.5 -3.0 1.25 0 0 0</pose>
+    <model name="div_l4"><static>true</static><pose>10.5 2.0 1.25 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.15 4.0 2.5</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.15 4.0 2.5</size></box></geometry>
@@ -254,7 +256,7 @@
 
     <!-- ========== FURNITURE ========== -->
     <!-- Bed 1 (Room 1, upper-left) -->
-    <model name="bed_01"><static>true</static><pose>-5.25 3.5 0 0 0 0</pose>
+    <model name="bed_01"><static>true</static><pose>2.0 8.5 0 0 0 0</pose>
       <link name="frame"><pose>0 0 0.225 0 0 0</pose>
         <collision name="c"><geometry><box><size>2.0 0.9 0.45</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.0 0.9 0.45</size></box></geometry>
@@ -267,7 +269,7 @@
       </link>
     </model>
     <!-- Bed 2 (Room 2, upper-center) -->
-    <model name="bed_02"><static>true</static><pose>0.0 3.5 0 0 0 0</pose>
+    <model name="bed_02"><static>true</static><pose>7.0 8.5 0 0 0 0</pose>
       <link name="frame"><pose>0 0 0.225 0 0 0</pose>
         <collision name="c"><geometry><box><size>2.0 0.9 0.45</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.0 0.9 0.45</size></box></geometry>
@@ -280,7 +282,7 @@
       </link>
     </model>
     <!-- Bed 3 (Room 3, upper-right) -->
-    <model name="bed_03"><static>true</static><pose>5.25 3.5 0 0 0 0</pose>
+    <model name="bed_03"><static>true</static><pose>12.25 8.5 0 0 0 0</pose>
       <link name="frame"><pose>0 0 0.225 0 0 0</pose>
         <collision name="c"><geometry><box><size>2.0 0.9 0.45</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.0 0.9 0.45</size></box></geometry>
@@ -293,7 +295,7 @@
       </link>
     </model>
     <!-- Bed 4 (Room 4, lower-center) -->
-    <model name="bed_04"><static>true</static><pose>0.0 -3.5 0 0 0 0</pose>
+    <model name="bed_04"><static>true</static><pose>7.0 1.5 0 0 0 0</pose>
       <link name="frame"><pose>0 0 0.225 0 0 0</pose>
         <collision name="c"><geometry><box><size>2.0 0.9 0.45</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.0 0.9 0.45</size></box></geometry>
@@ -307,7 +309,7 @@
     </model>
 
     <!-- Pharmacy counter -->
-    <model name="pharmacy_counter"><static>true</static><pose>-5.25 -4.0 0.45 0 0 0</pose>
+    <model name="pharmacy_counter"><static>true</static><pose>1.75 1.0 0.45 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>2.5 0.6 0.9</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>2.5 0.6 0.9</size></box></geometry>
@@ -316,7 +318,7 @@
     </model>
 
     <!-- Nurse desk -->
-    <model name="nurse_desk"><static>true</static><pose>5.25 -3.0 0.35 0 0 0</pose>
+    <model name="nurse_desk"><static>true</static><pose>12.25 2.0 0.35 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>1.8 0.8 0.7</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>1.8 0.8 0.7</size></box></geometry>
@@ -325,21 +327,21 @@
     </model>
 
     <!-- Bedside tables -->
-    <model name="table_01"><static>true</static><pose>-6.5 3.5 0.3 0 0 0</pose>
+    <model name="table_01"><static>true</static><pose>0.5 8.5 0.3 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.5 0.5 0.6</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.5 0.5 0.6</size></box></geometry>
           <material><ambient>0.5 0.35 0.2 1</ambient><diffuse>0.5 0.35 0.2 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="table_02"><static>true</static><pose>-1.5 3.5 0.3 0 0 0</pose>
+    <model name="table_02"><static>true</static><pose>5.5 8.5 0.3 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.5 0.5 0.6</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.5 0.5 0.6</size></box></geometry>
           <material><ambient>0.5 0.35 0.2 1</ambient><diffuse>0.5 0.35 0.2 1</diffuse></material></visual>
       </link>
     </model>
-    <model name="table_03"><static>true</static><pose>3.8 3.5 0.3 0 0 0</pose>
+    <model name="table_03"><static>true</static><pose>10.8 8.5 0.3 0 0 0</pose>
       <link name="link">
         <collision name="c"><geometry><box><size>0.5 0.5 0.6</size></box></geometry></collision>
         <visual name="v"><geometry><box><size>0.5 0.5 0.6</size></box></geometry>

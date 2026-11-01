@@ -1,0 +1,30 @@
+'''
+STEP 0 — Kill old processes first:
+
+pkill -9 -f gz; pkill -9 -f ruby; pkill -9 -f rviz; pkill -9 -f ros2; pkill -9 -f nav2; pkill -9 -f parameter_bridge; pkill -9 -f robot_state; pkill -9 -f component_container; sleep 3
+
+
+STEP 1 — Terminal 1 (Launch simulation):
+
+source /opt/ros/lyrical/setup.bash
+cd ~/hospital_amr
+source install/setup.bash
+export TURTLEBOT3_MODEL=burger
+ros2 launch hospital_amr hospital_sim.launch.py
+
+
+STEP 2 — Terminal 2 (Run delivery — WAIT until Gazebo and RViz are fully loaded):
+
+source /opt/ros/lyrical/setup.bash
+cd ~/hospital_amr
+source install/setup.bash
+ros2 run hospital_amr delivery_manager
+
+
+REBUILD :
+
+source /opt/ros/lyrical/setup.bash
+cd ~/hospital_amr
+colcon build --packages-select hospital_amr --symlink-install
+
+'''

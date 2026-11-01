@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Generate hospital_ward.pgm map — centered at origin."""
+"""Generate hospital_ward.pgm map -- original layout (0-14, 0-10)."""
 
 import os
 
 # Map parameters
 RESOLUTION = 0.05  # meters per pixel
-ORIGIN_X = -8.0    # 1m border around hospital (-7..7)
-ORIGIN_Y = -6.0    # 1m border around hospital (-5..5)
+ORIGIN_X = -1.0    # 1m border around hospital (0..14)
+ORIGIN_Y = -1.0    # 1m border around hospital (0..10)
 MAP_WIDTH_M = 16.0
 MAP_HEIGHT_M = 12.0
 
@@ -29,64 +29,64 @@ def draw_rect(grid, x1, y1, x2, y2, val):
 
 grid = [[205 for _ in range(WIDTH)] for _ in range(HEIGHT)]
 
-# Outside boundaries → unknown
-draw_rect(grid, -8, -6, 8, -5, 128)
-draw_rect(grid, -8,  5, 8,  6, 128)
-draw_rect(grid, -8, -6, -7, 6, 128)
-draw_rect(grid,  7, -6,  8, 6, 128)
+# Outside boundaries -> unknown
+draw_rect(grid, -1, -1, 15, 0, 128)
+draw_rect(grid, -1, 10, 15, 11, 128)
+draw_rect(grid, -1, -1, 0, 11, 128)
+draw_rect(grid, 14, -1, 15, 11, 128)
 
 W = 0  # wall color (black)
 H = 0.075  # half wall thickness
 
 # Outer walls
-draw_rect(grid, -7-H, -5-H, 7+H, -5+H, W)   # south
-draw_rect(grid, -7-H,  5-H, 7+H,  5+H, W)   # north
-draw_rect(grid, -7-H, -5, -7+H,  5, W)        # west
-draw_rect(grid,  7-H, -5,  7+H,  5, W)        # east
+draw_rect(grid, 0-H, 0-H, 14+H, 0+H, W)   # south
+draw_rect(grid, 0-H, 10-H, 14+H, 10+H, W)  # north
+draw_rect(grid, 0-H, 0, 0+H, 10, W)         # west
+draw_rect(grid, 14-H, 0, 14+H, 10, W)       # east
 
-# Corridor walls y=-1 (south side)
-draw_rect(grid, -7, -1-H, -5.6, -1+H, W)
-# gap -5.6 to -4.4 (pharmacy door)
-draw_rect(grid, -4.4, -1-H, -3.5, -1+H, W)
-draw_rect(grid, -3.5, -1-H, -1.75, -1+H, W)
-# gap -1.75 to -0.6 (room 4 door)
-draw_rect(grid, -0.6, -1-H, 1.75, -1+H, W)
-draw_rect(grid, 1.75, -1-H, 3.5, -1+H, W)
-draw_rect(grid, 3.5, -1-H, 7, -1+H, W)
+# Corridor walls y=4 (south side of corridor)
+draw_rect(grid, 0, 4-H, 1.4, 4+H, W)
+# gap 1.4 to 2.6 (pharmacy door)
+draw_rect(grid, 2.6, 4-H, 3.5, 4+H, W)
+draw_rect(grid, 3.5, 4-H, 5.25, 4+H, W)
+# gap 5.25 to 6.4 (room 4 door)
+draw_rect(grid, 6.4, 4-H, 8.75, 4+H, W)
+draw_rect(grid, 8.75, 4-H, 10.5, 4+H, W)
+draw_rect(grid, 10.5, 4-H, 14, 4+H, W)
 
-# Corridor walls y=1 (north side)
-draw_rect(grid, -7, 1-H, -5.6, 1+H, W)
-# gap -5.6 to -4.4 (room 1 door)
-draw_rect(grid, -4.4, 1-H, -3.5, 1+H, W)
-draw_rect(grid, -3.5, 1-H, -1.75, 1+H, W)
-# gap -1.75 to -0.6 (room 2 door)
-draw_rect(grid, -0.6, 1-H, 1.75, 1+H, W)
-draw_rect(grid, 1.75, 1-H, 3.5, 1+H, W)
-# gap 3.5 to 4.7 (room 3 door)
-draw_rect(grid, 4.7, 1-H, 7, 1+H, W)
+# Corridor walls y=6 (north side of corridor)
+draw_rect(grid, 0, 6-H, 1.4, 6+H, W)
+# gap 1.4 to 2.6 (room 1 door)
+draw_rect(grid, 2.6, 6-H, 3.5, 6+H, W)
+draw_rect(grid, 3.5, 6-H, 5.25, 6+H, W)
+# gap 5.25 to 6.4 (room 2 door)
+draw_rect(grid, 6.4, 6-H, 8.75, 6+H, W)
+draw_rect(grid, 8.75, 6-H, 10.5, 6+H, W)
+# gap 10.5 to 11.7 (room 3 door)
+draw_rect(grid, 11.7, 6-H, 14, 6+H, W)
 
 # Room dividers (vertical)
-# Upper
-draw_rect(grid, -3.5-H, 1, -3.5+H, 5, W)
-draw_rect(grid, -1.75-H, 1, -1.75+H, 5, W)
-draw_rect(grid, 1.75-H, 1, 1.75+H, 5, W)
-draw_rect(grid, 3.5-H, 1, 3.5+H, 5, W)
-# Lower
-draw_rect(grid, -3.5-H, -5, -3.5+H, -1, W)
-draw_rect(grid, -1.75-H, -5, -1.75+H, -1, W)
-draw_rect(grid, 1.75-H, -5, 1.75+H, -1, W)
-draw_rect(grid, 3.5-H, -5, 3.5+H, -1, W)
+# Upper rooms
+draw_rect(grid, 3.5-H, 6, 3.5+H, 10, W)
+draw_rect(grid, 5.25-H, 6, 5.25+H, 10, W)
+draw_rect(grid, 8.75-H, 6, 8.75+H, 10, W)
+draw_rect(grid, 10.5-H, 6, 10.5+H, 10, W)
+# Lower rooms
+draw_rect(grid, 3.5-H, 0, 3.5+H, 4, W)
+draw_rect(grid, 5.25-H, 0, 5.25+H, 4, W)
+draw_rect(grid, 8.75-H, 0, 8.75+H, 4, W)
+draw_rect(grid, 10.5-H, 0, 10.5+H, 4, W)
 
 # Furniture
-draw_rect(grid, -6.25, 3.0, -4.25, 4.0, W)   # bed 01
-draw_rect(grid, -1.0,  3.0,  1.0,  4.0, W)   # bed 02
-draw_rect(grid,  4.25, 3.0,  6.25, 4.0, W)   # bed 03
-draw_rect(grid, -1.0, -4.0,  1.0, -3.0, W)   # bed 04
-draw_rect(grid, -6.5, -4.3, -4.0, -3.7, W)   # pharmacy counter
-draw_rect(grid,  4.35, -3.4, 6.15, -2.6, W)   # nurse desk
-draw_rect(grid, -6.75, 3.25, -6.25, 3.75, W)  # table 01
-draw_rect(grid, -1.75, 3.25, -1.25, 3.75, W)  # table 02
-draw_rect(grid, 3.55, 3.25, 4.05, 3.75, W)    # table 03
+draw_rect(grid, 0.75, 8.0, 2.75, 9.0, W)    # bed 01
+draw_rect(grid, 6.0,  8.0, 8.0,  9.0, W)     # bed 02
+draw_rect(grid, 11.25, 8.0, 13.25, 9.0, W)   # bed 03
+draw_rect(grid, 6.0,  1.0, 8.0,  2.0, W)     # bed 04
+draw_rect(grid, 0.5,  0.7, 3.0,  1.3, W)     # pharmacy counter
+draw_rect(grid, 11.35, 1.6, 13.15, 2.4, W)   # nurse desk
+draw_rect(grid, 0.25, 8.25, 0.75, 8.75, W)   # table 01
+draw_rect(grid, 5.25, 8.25, 5.75, 8.75, W)   # table 02
+draw_rect(grid, 10.55, 8.25, 11.05, 8.75, W) # table 03
 
 # Write PGM
 script_dir = os.path.dirname(os.path.abspath(__file__))
