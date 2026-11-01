@@ -41,8 +41,8 @@ amcl:
     scan_topic: scan
     set_initial_pose: true
     initial_pose:
-      x: 1.75
-      y: 2.5
+      x: -5.25
+      y: -2.5
       z: 0.0
       yaw: 0.0
 

@@ -2,15 +2,12 @@
 """
 delivery_manager.py — Hospital Medicine Delivery Manager.
 
-Manages the full delivery workflow:
-  1. Receives a delivery request (bed ID)
-  2. Waits for Nav2 to be fully active
-  3. Navigates to the bed
-  4. Confirms delivery
-  5. Returns to the pharmacy
+Visits ALL beds sequentially: Pharmacy → Bed 1 → Bed 2 → Bed 3 → Bed 4 → Pharmacy.
 
 Usage:
-  ros2 run hospital_amr delivery_manager --ros-args -p bed_id:=bed_01
+  ros2 run hospital_amr delivery_manager
+  ros2 run hospital_amr delivery_manager --ros-args -p bed_id:=bed_02  (single bed)
+  ros2 run hospital_amr delivery_manager --ros-args -p mode:=all       (all beds)
 """
 
 import rclpy
@@ -43,61 +40,47 @@ class DeliveryManager(Node):
     def __init__(self):
         super().__init__('delivery_manager')
 
-        # --- Parameters ---
-        self.declare_parameter('bed_id', 'bed_01')
+        self.declare_parameter('bed_id', 'all')
         self.declare_parameter('medicine_id', 'MED-DEFAULT')
+        self.declare_parameter('mode', 'all')
 
         self.bed_id = self.get_parameter('bed_id').get_parameter_value().string_value
         self.medicine_id = self.get_parameter('medicine_id').get_parameter_value().string_value
+        self.mode = self.get_parameter('mode').get_parameter_value().string_value
 
-        # --- Components ---
         self.registry = BedRegistry()
         self.navigator = BasicNavigator()
-
-        # --- State ---
         self.state = MissionState.IDLE
         self.mission_log = []
 
-        # --- Publishers ---
         self.status_pub = self.create_publisher(String, '/delivery_status', 10)
 
         self.get_logger().info('╔══════════════════════════════════════╗')
         self.get_logger().info('║   Hospital Delivery Manager          ║')
         self.get_logger().info('╚══════════════════════════════════════╝')
-        self.get_logger().info(f'Target: {self.bed_id}')
-        self.get_logger().info(f'Medicine: {self.medicine_id}')
 
     def set_state(self, new_state: MissionState):
-        """Transition to a new mission state and log it."""
         old = self.state
         self.state = new_state
-        timestamp = datetime.now().strftime('%H:%M:%S')
-        self.mission_log.append({
-            'time': timestamp,
-            'from': old.value,
-            'to': new_state.value,
-        })
+        ts = datetime.now().strftime('%H:%M:%S')
+        self.mission_log.append({'time': ts, 'from': old.value, 'to': new_state.value})
         self.get_logger().info(f'State: {old.value} → {new_state.value}')
-        status = String()
-        status.data = f'{new_state.value}: {self.bed_id}'
-        self.status_pub.publish(status)
+        msg = String()
+        msg.data = f'{new_state.value}'
+        self.status_pub.publish(msg)
 
     def create_pose(self, x: float, y: float, yaw: float = 0.0) -> PoseStamped:
-        """Create a PoseStamped for Nav2."""
         pose = PoseStamped()
         pose.header.frame_id = 'map'
         pose.header.stamp = self.get_clock().now().to_msg()
         pose.pose.position.x = x
         pose.pose.position.y = y
-        pose.pose.position.z = 0.0
         pose.pose.orientation.z = math.sin(yaw / 2.0)
         pose.pose.orientation.w = math.cos(yaw / 2.0)
         return pose
 
-    def navigate_to(self, x: float, y: float, yaw: float,
-                    label: str) -> bool:
-        """Navigate to a position using Nav2. Returns True on success."""
-        self.get_logger().info(f'Navigating to {label}: ({x:.1f}, {y:.1f})')
+    def navigate_to(self, x: float, y: float, yaw: float, label: str) -> bool:
+        self.get_logger().info(f'🚀 Navigating to {label}: ({x:.1f}, {y:.1f})')
         goal = self.create_pose(x, y, yaw)
         self.navigator.goToPose(goal)
 
@@ -121,75 +104,92 @@ class DeliveryManager(Node):
             self.get_logger().error(f'  ❌ Navigation to {label} FAILED')
             return False
 
-    def run_delivery(self):
-        """Execute the full delivery mission."""
-
-        start_time = datetime.now()
-
-        # --- 1. Validate request ---
-        self.set_state(MissionState.REQUEST_RECEIVED)
-        bed = self.registry.get_bed(self.bed_id)
+    def deliver_to_bed(self, bed_id: str) -> bool:
+        """Navigate to a single bed, deliver, return True on success."""
+        bed = self.registry.get_bed(bed_id)
         if bed is None:
-            self.get_logger().error(f'❌ Unknown bed: {self.bed_id}')
-            self.get_logger().info(
-                f'Available beds: {", ".join(self.registry.list_beds())}')
-            self.set_state(MissionState.FAILED)
-            return
+            self.get_logger().error(f'❌ Unknown bed: {bed_id}')
+            return False
 
-        self.get_logger().info(f'Delivery request validated:')
-        self.get_logger().info(f'  Bed: {bed["name"]}')
-        self.get_logger().info(f'  Room: {bed["room"]}')
-        self.get_logger().info(f'  Medicine: {self.medicine_id}')
-        self.get_logger().info(f'  Position: ({bed["x"]}, {bed["y"]})')
+        self.get_logger().info(f'')
+        self.get_logger().info(f'📋 Delivery order: {bed["name"]}')
+        self.get_logger().info(f'   Medicine: {self.medicine_id}')
 
-        # --- 2. Wait for Nav2 ---
+        self.set_state(MissionState.NAVIGATING_TO_BED)
+        success = self.navigate_to(bed['x'], bed['y'], bed['yaw'], bed['name'])
+
+        if not success:
+            return False
+
+        self.set_state(MissionState.ARRIVED_AT_BED)
+        self.get_logger().info(f'📦 Delivering {self.medicine_id} to {bed["name"]}...')
+        time.sleep(2.0)
+
+        self.set_state(MissionState.DELIVERY_CONFIRMED)
+        self.get_logger().info(f'✅ Delivery confirmed at {bed["name"]}!')
+        return True
+
+    def run_delivery(self):
+        """Execute delivery mission — single bed or all beds."""
+        start_time = datetime.now()
+        self.set_state(MissionState.REQUEST_RECEIVED)
+
+        # Wait for Nav2
         self.get_logger().info('Waiting for Nav2 to be fully ready...')
         self.navigator.waitUntilNav2Active()
         self.get_logger().info('Nav2 is active!')
 
-        # --- 3. Set initial pose at pharmacy ---
+        # Set initial pose at pharmacy
         pharmacy = self.registry.get_pharmacy()
         initial = self.create_pose(pharmacy['x'], pharmacy['y'],
                                     pharmacy.get('yaw', 0.0))
         self.navigator.setInitialPose(initial)
         self.get_logger().info('Initial pose set at Pharmacy. Waiting for AMCL...')
-        time.sleep(3.0)  # Let AMCL converge
+        time.sleep(3.0)
 
-        # --- 4. Navigate to bed ---
-        self.set_state(MissionState.NAVIGATING_TO_BED)
-        success = self.navigate_to(
-            bed['x'], bed['y'], bed['yaw'], bed['name'])
+        # Determine which beds to visit
+        if self.bed_id == 'all' or self.mode == 'all':
+            bed_ids = self.registry.list_beds()
+            self.get_logger().info(f'🏥 FULL WARD ROUND: visiting {len(bed_ids)} beds')
+        else:
+            bed_ids = [self.bed_id]
+            self.get_logger().info(f'Single delivery to: {self.bed_id}')
 
-        if not success:
-            self.set_state(MissionState.FAILED)
-            return
+        # Visit each bed
+        delivered = []
+        failed = []
+        for bed_id in bed_ids:
+            success = self.deliver_to_bed(bed_id)
+            if success:
+                delivered.append(bed_id)
+            else:
+                failed.append(bed_id)
+                self.get_logger().warning(f'Skipping {bed_id}, continuing tour...')
 
-        # --- 5. Arrived — confirm delivery ---
-        self.set_state(MissionState.ARRIVED_AT_BED)
-        self.get_logger().info(f'📦 Delivering {self.medicine_id} to {bed["name"]}...')
-        time.sleep(2.0)  # Simulated delivery time
-
-        self.set_state(MissionState.DELIVERY_CONFIRMED)
-        self.get_logger().info(f'✅ Delivery confirmed at {bed["name"]}!')
-
-        # --- 6. Return to pharmacy ---
+        # Return to pharmacy
+        self.get_logger().info('')
+        self.get_logger().info('🔙 Returning to Pharmacy...')
         self.set_state(MissionState.RETURNING_TO_PHARMACY)
-        success = self.navigate_to(
-            pharmacy['x'], pharmacy['y'],
-            pharmacy.get('yaw', 0.0), 'Pharmacy')
+        self.navigate_to(pharmacy['x'], pharmacy['y'],
+                         pharmacy.get('yaw', 0.0), 'Pharmacy')
 
         self.set_state(MissionState.COMPLETED)
 
-        # --- 7. Mission summary ---
+        # Mission summary
         elapsed = (datetime.now() - start_time).total_seconds()
         self.get_logger().info('')
         self.get_logger().info('╔══════════════════════════════════════╗')
         self.get_logger().info('║        MISSION SUMMARY               ║')
         self.get_logger().info('╠══════════════════════════════════════╣')
-        self.get_logger().info(f'║ Bed:      {bed["name"]:<28}║')
+        self.get_logger().info(f'║ Delivered: {len(delivered)}/{len(bed_ids)} beds{" " * 21}║')
+        for b in delivered:
+            bed = self.registry.get_bed(b)
+            self.get_logger().info(f'║   ✅ {bed["name"]:<32}║')
+        for b in failed:
+            bed = self.registry.get_bed(b)
+            self.get_logger().info(f'║   ❌ {bed["name"]:<32}║')
         self.get_logger().info(f'║ Medicine: {self.medicine_id:<28}║')
-        self.get_logger().info(f'║ Status:   ✅ DELIVERED{" " * 17}║')
-        self.get_logger().info(f'║ Time:     {elapsed:.1f}s{" " * (26 - len(f"{elapsed:.1f}s"))}║')
+        self.get_logger().info(f'║ Time:     {elapsed:.0f}s{" " * (27 - len(f"{elapsed:.0f}s"))}║')
         self.get_logger().info('╚══════════════════════════════════════╝')
 
 
